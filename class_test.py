@@ -166,8 +166,15 @@ class DecisionTree():
                 for i in range(1, data_count):
                     # treshold設為 data[i] 與 data[i-1] 的中間值
                     t = (after_sort[i][f] + after_sort[i - 1][f]) / 2
-                    left_data = after_sort[:i, -1]
-                    right_data = after_sort[i:, -1]
+                    
+                    #================================================================
+                    #left_data = after_sort[:i, -1]
+                    #right_data = after_sort[i:, -1]
+                    #==================================================================
+                    this_line=after_sort[:,feature_count]
+
+                    left_data = this_line[:i]
+                    right_data = this_line[i:]
 
                     left_impurity = self.count_pur(left_data[:])
                     right_impurity = self.count_pur(right_data[:])
