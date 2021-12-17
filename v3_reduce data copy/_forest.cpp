@@ -245,9 +245,8 @@ Node* DecisionTree::split(std::vector<std::vector<double>> data , int now_depth)
             double t6=clock();
             //std::vector<double> this_y=transform(data);
             
-            int  a_y[data.size()];
-            int* p_y=p_transform(data,a_y);
-            int total=sumint_sse(p_y,data_count-1);
+            double  a_y[data.size()];
+            double* p_y=p_transform(data,a_y);
             //double* p_y=p_transform(all_we_need,a_y);
             t6=(clock()-t6)/CLOCKS_PER_SEC;
             debug[6]+=t6;
@@ -289,32 +288,20 @@ Node* DecisionTree::split(std::vector<std::vector<double>> data , int now_depth)
 */
 
 
-                //====================without simd/best=======================
-/* 
                 double t4=clock();
                 double left_impurity =p_gini(p_y,i);
                 double right_impurity=p_gini((p_y+i),data_count-i);
-                double total_impurity = i*left_impurity + (data_count-i)*right_impurity;
-                total_impurity = total_impurity/data_count;
-
-                //std::cout<<"total:"<<total_impurity<<endl;
                 t4=(clock()-t4)/CLOCKS_PER_SEC;
                 debug[4]+=t4;
-*/
 
-                //=======================with_simd=========================
-                double t4=clock();
-                double total_impurity =simd_gini(p_y,i,data_count,total);
-                
-                //std::cout<<"total2:"<<total_impurity<<endl;
 
-                //float tt=1/0;
-                t4=(clock()-t4)/CLOCKS_PER_SEC;
-                debug[4]+=t4;
+
 
                 double t7=clock();
+                double total_impurity = i*left_impurity + (data_count-i)*right_impurity;
                
 
+                total_impurity = total_impurity/data_count;
 
 
                 //if total_impurity <= min_impurity:

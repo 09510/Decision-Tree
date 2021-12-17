@@ -28,6 +28,7 @@ update      :0.007
 
 
 
+
 after modify (avoid data copy: split part and gini calculate part, tranform part i just transfrom we need)
 
 
@@ -42,3 +43,14 @@ update      :0.008
 
 
 
+
+using simd
+
+total_time  :0.082/0.051   (100%)  
+gini        :0.023   (xx%)   46
+
+sort        :0.023   (xx%)   1
+transform   :0.007
+split       :0.0
+dubug       :0.03
+update      :0.008

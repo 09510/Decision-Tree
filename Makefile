@@ -35,4 +35,4 @@ debug:test_code
 
 .PHONY: test_code
 test_code: test.cpp
-	g++ test.cpp -o test
+	g++ --std=c++14  -mavx test.cpp -o test

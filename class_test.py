@@ -283,20 +283,27 @@ class DecisionTree():
         return self.important_count
 
 
-gini_t=0
+gini_t_1=0
+gini_t_2=0
 def gini(sequence):
-    global gini_t
+    global gini_t_1
+    global gini_t_2
+
     t=time.time()
     length = len(sequence)
     unique, each_count = np.unique(sequence, return_counts=True)
     p = each_count / length
+    gini_t_1 =gini_t_1+ (time.time()-t)
 
+
+
+    t=time.time()
     g = 0
     for i in range(len(p)):
         g += p[i]**2
     g = 1 - g
+    gini_t_2 =gini_t_2+ (time.time()-t)
 
-    gini_t =gini_t+ (time.time()-t)
     return g    
 
 
@@ -362,7 +369,8 @@ if __name__ == '__main__':
     print("split_feature",clf_depth3.debug[2])
     print("split_time :",clf_depth3.debug[4] )
     print("sort time :",clf_depth3.debug[3])
-    print("gini time : ",gini_t)
+    print("gini_1 time : ",gini_t_1)
+    print("gini_2 time : ",gini_t_2)
     print("update time : ",clf_depth3.debug[5])
     print("really split time : ",clf_depth3.debug[6])
     t=time.time()
