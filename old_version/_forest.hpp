@@ -2,7 +2,7 @@
 #include <vector> 
 #include<time.h>
 #include <cmath>
-#include <algorithm>
+
 
 
 class Node
@@ -136,7 +136,7 @@ class DecisionTree
         {
             for(int i=0;i<x.size();i++ )
             {
-                arr[i]=x[i][x[0].size()-1];
+                arr[i]=x[i][total_feature];
             }
             return arr;
         }
@@ -177,26 +177,15 @@ class DecisionTree
 
         std::vector<std::vector<double>> sort_and_get(std::vector<std::vector<double>>x,int f)
         {
-            std::vector<std::vector<double>> ans(x.size(),std::vector<double>(2));
-            for(int i=0;i<x.size();i++)
-            {
-                ans[i][0]=x[i][f];
-                ans[i][1]=x[i][total_feature];
-            }
-            std::sort(ans.begin(),
-            ans.end(),
-            [f] (const std::vector<double> &a, const std::vector<double> &b)
-            {
-                return a[0] < b[0];
-            });
+            std::vector<std::vector<double>> ans;
+            ans.assign(x.size,2);
 
-/*
             for(int i=0;i<x.size();i++)
             {
-                std::cout<<"f:"<<ans[i][0]<<"\ty:"<<ans[i][1]<<std::endl;
+                ans.[i][0]=x[i][f];
+                ans.[i][1]=x[i][total_feature]
             }
-            float s=2/0;
-*/
+
             return ans;
         }
 

@@ -26,3 +26,13 @@ clean:
 .PHONY: run
 run:mod
 	python3 class_test.py
+
+
+
+.PHONY: debug
+debug:test_code
+	./test
+
+.PHONY: test_code
+test_code: test.cpp
+	g++ test.cpp -o test

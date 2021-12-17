@@ -222,30 +222,24 @@ Node* DecisionTree::split(std::vector<std::vector<double>> data , int now_depth)
             //after_sort = np.asarray(sorted(data, key=lambda t: t[f]))
 
             double t=clock();
-            
+
             std::sort(data.begin(),
             data.end(),
             [f] (const std::vector<double> &a, const std::vector<double> &b)
             {
                 return a[f] < b[f];
             });
-            
-            //std::vector<std::vector<double>> all_we_need=sort_and_get(data,f);
 
             t=(clock()-t)/CLOCKS_PER_SEC;
             debug[0]+=t;
 
 
-
-
-
-
             double t6=clock();
-            //std::vector<double> this_y=transform(data);
+            std::vector<double> this_y=transform(data);
             
-            double  a_y[data.size()];
-            double* p_y=p_transform(data,a_y);
-            //double* p_y=p_transform(all_we_need,a_y);
+            //double* p_y=p_transform(data)
+            
+            //std::vector<double> this_f_data=t_data[f] ;
             t6=(clock()-t6)/CLOCKS_PER_SEC;
             debug[6]+=t6;
 
@@ -255,9 +249,8 @@ Node* DecisionTree::split(std::vector<std::vector<double>> data , int now_depth)
             for(int i=1;i<data_count;i++)
             {
                 double t=(data[i][f]+data[i-1][f])/2;
-                //double t=(all_we_need[i][0]+all_we_need[i-1][0])/2;
 
-/*              
+              
                 //==================split data(copy)================================================
                 double t3=clock();
                 std::vector<double> left_data (this_y.begin(),this_y.begin()+i);
@@ -272,27 +265,19 @@ Node* DecisionTree::split(std::vector<std::vector<double>> data , int now_depth)
                 debug[4]+=t4;
 
                 //====================================================================================
-*/            
-
-
-                //=====================iterator==============================
+                
 
 /*
+                //===================================================
+
+
                 double t4=clock();
                 double left_impurity =v_gini(this_y.begin(),this_y.begin()+i,i);
                 double right_impurity=v_gini(this_y.begin()+i,this_y.end(),data_count-i);
                 t4=(clock()-t4)/CLOCKS_PER_SEC;
                 debug[4]+=t4;
+
 */
-
-
-                double t4=clock();
-                double left_impurity =p_gini(p_y,i);
-                double right_impurity=p_gini((p_y+i),data_count-i);
-                t4=(clock()-t4)/CLOCKS_PER_SEC;
-                debug[4]+=t4;
-
-
 
 
                 double t7=clock();

@@ -339,7 +339,7 @@ if __name__ == '__main__':
     # of the data. Please compute the Entropy and Gini Index of provided data.
     # Please use the formula from the course sludes on E3
 
-    data = np.array([1, 0, 1, 1, 1, 1, 0, 0, 1, 1, 0])
+    #data = np.array([1, 0, 1, 1, 1, 1, 0, 0, 1, 1, 0])
     #print("Gini of data is ", gini(data))
     #print("Entropy of data is ", entropy(data))
 
@@ -359,6 +359,7 @@ if __name__ == '__main__':
     t=time.time()-t
     print("build tree by Python : ",t,"s")
 
+    print("split_feature",clf_depth3.debug[2])
     print("split_time :",clf_depth3.debug[4] )
     print("sort time :",clf_depth3.debug[3])
     print("gini time : ",gini_t)

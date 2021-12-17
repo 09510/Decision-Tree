@@ -229,8 +229,6 @@ Node* DecisionTree::split(std::vector<std::vector<double>> data , int now_depth)
             {
                 return a[f] < b[f];
             });
-            
-            //std::vector<std::vector<double>> all_we_need=sort_and_get(data,f);
 
             t=(clock()-t)/CLOCKS_PER_SEC;
             debug[0]+=t;
@@ -242,10 +240,8 @@ Node* DecisionTree::split(std::vector<std::vector<double>> data , int now_depth)
 
             double t6=clock();
             //std::vector<double> this_y=transform(data);
-            
             double  a_y[data.size()];
             double* p_y=p_transform(data,a_y);
-            //double* p_y=p_transform(all_we_need,a_y);
             t6=(clock()-t6)/CLOCKS_PER_SEC;
             debug[6]+=t6;
 
@@ -255,7 +251,6 @@ Node* DecisionTree::split(std::vector<std::vector<double>> data , int now_depth)
             for(int i=1;i<data_count;i++)
             {
                 double t=(data[i][f]+data[i-1][f])/2;
-                //double t=(all_we_need[i][0]+all_we_need[i-1][0])/2;
 
 /*              
                 //==================split data(copy)================================================

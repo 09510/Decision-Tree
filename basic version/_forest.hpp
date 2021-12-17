@@ -1,6 +1,7 @@
 #include<iostream> 
 #include <vector> 
 #include<time.h>
+#include <cmath>
 
 
 
@@ -9,14 +10,14 @@ class Node
     public:
         Node()
         {
-            test_val=1;
+            label=-1;
         }
 
         Node * right_Node;
         Node * left_Node;
         int using_feature;
-        int threshold;
-        int impurity;
+        double threshold;
+        double impurity;
         int label;
 
         int test_val;
@@ -36,12 +37,12 @@ class DecisionTree
         int max_depth;
         int total_feature;
         Node * root;
-        double debug[6]={0,0,0,0,0,0};
+        double debug[10]={0,0,0,0,0,0,0,0,0,0};
 
 
         Node* split(std::vector<std::vector<double>>  data,int now_depth);
         void build_tree(std::vector<double> x,std::vector<double> y,int data_num);
-        double classfy(std::vector<double> x,std::vector<double> y,int data_num);
+        std::vector<int>  classfy(std::vector<double> x,std::vector<double> y,int data_num,bool for_forest);
         
         void get_one_node_feature();
         void fit();
@@ -81,15 +82,76 @@ class DecisionTree
             }
         }
 
-        std::vector<double> get_y_column(std::vector<std::vector<double>> data)
+        void debug_v(std::vector<double> v)
         {
-            std::vector<double> ans;
-            for(int i=0;i<data.size();i++)
+            for(int i=0;i<v.size();i++)
             {
-                ans.push_back(data[i].back());
+                
+                std::cout<<v[i]<<",";
+            }
+            std::cout<<std::endl;
+        }
+        void debug_tree_build(Node*n)
+        {
+            
+            if(root->right_Node!=nullptr || root->left_Node!=nullptr)
+            {
+                
+                std::cout<<"impurity:"<<n->impurity
+                    <<"\tthreshold:"<<n->threshold
+                    <<"\t"<<n->using_feature<<std::endl;
+                
+                if(n->right_Node!=nullptr){
+                debug_tree_build(n->right_Node);
+                }
+                else{
+                debug_tree_build(n->left_Node);
+                }
+            }
+        }
+        
+        std::vector<double> transform(std::vector<std::vector<double>>x)
+        {
+            /*
+            std::vector<std::vector<double>> ans(x[0].size(),std::vector<double>(x.size()));
+            for(int i=0;i<x.size();i++)
+            {
+                for(int j=0;j<x[0].size();j++)
+                {
+                   ans[j][i]=x[i][j];
+                }
             }
             return ans;
+            */
+            std::vector<double> ans;
+            for(int i=0;i<x.size();i++)
+            {
+                ans.push_back(*(x[i].end()-1));
+            }
+            //debug_v(ans);
+            //loat a=1/0;
+            return ans;
         }
+        
+
+        double v_gini(std::vector<double>::iterator start,std::vector<double>::iterator end,double length)
+        {
+            
+            double num_one=0;
+            for(std::vector<double>::iterator i = start; i!= end;++i)
+            {
+                num_one+=*i;
+            }
+
+            double purity=num_one/length;
+            double g = pow(purity,2)+pow(1-purity,2);
+            
+            //std::cout<<g<<std::endl;
+            g=1-g;
+            return g;
+        }
+
+        
 
 };
 
