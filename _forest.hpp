@@ -1,6 +1,7 @@
 #include<iostream> 
 #include <vector> 
 #include<time.h>
+#include <cmath>
 
 
 
@@ -36,7 +37,7 @@ class DecisionTree
         int max_depth;
         int total_feature;
         Node * root;
-        double debug[7]={0,0,0,0,0,0,0};
+        double debug[10]={0,0,0,0,0,0,0,0,0,0};
 
 
         Node* split(std::vector<std::vector<double>>  data,int now_depth);
@@ -119,20 +120,6 @@ class DecisionTree
                    ans[j][i]=x[i][j];
                 }
             }
-            /*
-            for(int i=0;i<x.size();i++)
-            {
-                for(int j=0;j<x[1].size();j++)
-                {
-                    if(ans[j][i]!=x[i][j])
-                    {
-                        std::cout<<"FUCK"<<std::endl;
-                    }
-                }
-            }
-
-            std::cout<<"gi bai"<<std::endl;
-            */
             return ans;
         }
 
@@ -144,6 +131,23 @@ class DecisionTree
                 ans.push_back(data[i].back());
             }
             return ans;
+        }
+
+        double v_gini(std::vector<double>::iterator start,std::vector<double>::iterator end,double length)
+        {
+            
+            double num_one=0;
+            for(std::vector<double>::iterator i = start; i!= end;++i)
+            {
+                num_one+=*i;
+            }
+
+            double purity=num_one/length;
+            double g = pow(purity,2)+pow(1-purity,2);
+            
+            //std::cout<<g<<std::endl;
+            g=1-g;
+            return g;
         }
 
         

@@ -121,6 +121,8 @@ class DecisionTree():
         self.total_fi = None
         self.root = None
         self.important_count = np.zeros((len(feature_names)))
+
+        self.debug=[0,0,0,0,0,0,0,0]
         return None
 
     class Node():
@@ -158,11 +160,13 @@ class DecisionTree():
             best_cut_feature = 0
             best_cut_position = 0
             min_impurity = 100000000
-
+            t2=time.time()
             for f in range(feature_count):
                 # 先將此feature根據大小順序排好
+                t3=time.time()
                 after_sort = np.asarray(sorted(data, key=lambda t: t[f]))
-                
+                self.debug[3]+=(time.time()-t3)
+
                 for i in range(1, data_count):
                     # treshold設為 data[i] 與 data[i-1] 的中間值
                     t = (after_sort[i][f] + after_sort[i - 1][f]) / 2
@@ -172,9 +176,11 @@ class DecisionTree():
                     #right_data = after_sort[i:, -1]
                     #==================================================================
                     this_line=after_sort[:,feature_count]
-
+                    
+                    t4=time.time()
                     left_data = this_line[:i]
                     right_data = this_line[i:]
+                    self.debug[4]+=(time.time()-t4)
 
                     left_impurity = self.count_pur(left_data[:])
                     right_impurity = self.count_pur(right_data[:])
@@ -183,22 +189,32 @@ class DecisionTree():
                         (data_count - i) * right_impurity
                     total_impurity /= data_count
 
+                    t5=time.time()
                     if total_impurity <= min_impurity:
                         min_impurity = total_impurity
                         best_cut_feature = f
                         best_cut_threshold = t
                         best_cut_position = i
+                    t5=time.time()-t5
+                    self.debug[5]+= t5
+            t2=time.time()-t2
+            self.debug[2]+=t2
 
+
+
+            t6=time.time()      
             this_node.using_feature = best_cut_feature
             this_node.impurity = min_impurity
             this_node.threshold = best_cut_threshold
 
             #print("impurity",this_node.impurity)
-
+      
             after_sort = np.asarray(
                 sorted(data, key=lambda t: t[best_cut_feature]))
             left_data = after_sort[:best_cut_position, :]
             right_data = after_sort[best_cut_position:, :]
+
+            self.debug[6]+=(time.time()-t6)
 
             if now_depth is None:
                 this_node.right_node = self.split(right_data, None)
@@ -206,7 +222,7 @@ class DecisionTree():
             else:
                 this_node.right_node = self.split(right_data, now_depth - 1)
                 this_node.left_node = self.split(left_data, now_depth - 1)
-
+            
         return this_node
     # 建立一棵樹
 
@@ -267,7 +283,10 @@ class DecisionTree():
         return self.important_count
 
 
+gini_t=0
 def gini(sequence):
+    global gini_t
+    t=time.time()
     length = len(sequence)
     unique, each_count = np.unique(sequence, return_counts=True)
     p = each_count / length
@@ -276,7 +295,9 @@ def gini(sequence):
     for i in range(len(p)):
         g += p[i]**2
     g = 1 - g
-    return g
+
+    gini_t =gini_t+ (time.time()-t)
+    return g    
 
 
 def entropy(sequence):
@@ -291,7 +312,9 @@ def entropy(sequence):
     return e
 
 
+
 if __name__ == '__main__':
+    
 
     x_train = pd.read_csv("data/x_train.csv")
     y_train = pd.read_csv("data/y_train.csv")
@@ -317,31 +340,50 @@ if __name__ == '__main__':
     # Please use the formula from the course sludes on E3
 
     data = np.array([1, 0, 1, 1, 1, 1, 0, 0, 1, 1, 0])
-    print("Gini of data is ", gini(data))
-    print("Entropy of data is ", entropy(data))
+    #print("Gini of data is ", gini(data))
+    #print("Entropy of data is ", entropy(data))
 
-    print("C_Gini of data is ",_forest.gini(data))
-    print("C_Entropy of data is ", _forest.entropy(data))
+    #print("C_Gini of data is ",_forest.gini(data))
+    #print("C_Entropy of data is ", _forest.entropy(data))
 
     print("\n\n\n\n")
+    
+    
+    
     # ### Question 2.1
     # Using Criterion=‘gini’, showing the accuracy score of test data by
     # Max_depth=3 and Max_depth=10, respectively.
     t=time.time()
     clf_depth3 = DecisionTree(criterion='gini', max_depth=3)
     clf_depth3.build_tree(x_train, y_train)
+    t=time.time()-t
+    print("build tree by Python : ",t,"s")
+
+    print("split_time :",clf_depth3.debug[4] )
+    print("sort time :",clf_depth3.debug[3])
+    print("gini time : ",gini_t)
+    print("update time : ",clf_depth3.debug[5])
+    print("really split time : ",clf_depth3.debug[6])
+    t=time.time()
     error = clf_depth3.classfy(x_test, y_test)
     t=time.time()-t
-    print(t)
+    print("using python tree : ",t,"s")
+
+
+    print("\n\n\n\n")
 
     t=time.time()
     clf_depth3 =_forest.DecisionTree('gini',3)
     clf_depth3.build_tree(c_x_train, c_y_train,c_train_num)
+    t=time.time()-t
+    print("build tree by C++ : ",t,"s")
     
+
+    t=time.time()
     error = clf_depth3.classfy(c_x_test, c_y_test,c_test_num)
     t=time.time()-t
 
-    print(t)
+    print("using C++ tree: ",t,"s")
 
     print("done")
     time.sleep(10000)

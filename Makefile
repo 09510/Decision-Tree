@@ -5,21 +5,6 @@ PINC = `python3 -m pybind11 --includes`
 SUFFIX = `python3-config --extension-suffix`
 EXEC = forest
 
-.PHONY: all
-all: $(EXEC)
-
-
-$(EXEC): _forest.o test.o
-	$(CC) $(CFLAGS) $^ -o $@
-
-$(test.o):test.cpp _forest.hpp
-	$(CC) $(CFLAGS) $^ -o $@
-
-$(_forest.o):_forest.cpp _forest.hpp
-	$(CC) $(CFLAGS) $^ -o $@
-
-
-
 
 
 
@@ -36,9 +21,6 @@ ${MODNAME}:_forest.cpp _forest.hpp
 clean:
 	rm -rf $(EXEC) *.o *.so ./__pycache__ ./.pytest_cache 
 
-.PHONY: test
-test:mod
-	python3 -m pytest -vx
 
 
 .PHONY: run

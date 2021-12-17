@@ -1,0 +1,23 @@
+python
+
+total_time  :1.80
+gini        :1.63   (90%)
+
+sort        :0.02   (1%)   
+transform   :0.0    (0%)
+split       :0.02   (1%)
+dubug       :0.09   (4%)
+update      :0.007  (<1%)
+really-split:0.0007 (<1%)
+
+
+C++
+
+total_time  :0.15   (100%)  12 
+gini        :0.05   (33%)   32.6
+
+sort        :0.02   (66%)   1.7
+transform   :0.02
+split       :0.02
+dubug       :0.05
+update      :0.007

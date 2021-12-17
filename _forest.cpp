@@ -168,7 +168,7 @@ void DecisionTree::build_tree(std::vector<double> x,std::vector<double> y,int da
     t/=CLOCKS_PER_SEC;
 
     root = split(data,max_depth);
-    //std::cout<<"preprocess time :"<<t<<"\nsort time :"<<debug[0]<<"\nsplit-feature:"<<debug[2]<<"\nsplit data:"<<debug[3]<<"\nget y:"<<debug[5]<<"\ngini:"<<debug[4]<<"\ntransform time:"<<debug[6]<<std::endl;
+    std::cout<<"preprocess time :"<<t<<"\nsort time :"<<debug[0]<<"\nsplit-feature:"<<debug[2]<<"\nsplit data:"<<debug[3]<<"\nupdate :"<<debug[7]<<"\ngini:"<<debug[4]<<"\ntransform time:"<<debug[6]<<"\nreal split time:"<<debug[8]<<std::endl;
    
     //debug_tree_build(root);
 }
@@ -236,70 +236,52 @@ Node* DecisionTree::split(std::vector<std::vector<double>> data , int now_depth)
 
             double t6=clock();
             std::vector<std::vector<double>> t_data=transform(data);
+
+            std::vector<double> this_y = t_data[feature_count];
+            //std::vector<double> this_f_data=t_data[f] ;
             t6=(clock()-t6)/CLOCKS_PER_SEC;
             debug[6]+=t6;
-            
+
+
+
             //for i in range(1, data_count):
             for(int i=1;i<data_count;i++)
             {
-                //# treshold設為 data[i] 與 data[i-1] 的中間值
-                //t = (after_sort[i][f] + after_sort[i - 1][f]) / 2
                 double t=(data[i][f]+data[i-1][f])/2;
-                std::vector<double> this_y = t_data[feature_count];
 
-                //debug_print(t_data);
-                //debug_v(this_y);
-                
+              
+                //==================split data(copy)================================================
                 double t3=clock();
-                //left_data = after_sort[:i, :]
-                //std::vector<std::vector<double>> left_data(data.begin(),data.begin()+i);
                 std::vector<double> left_data (this_y.begin(),this_y.begin()+i);
-                //right_data = after_sort[i:, :]
                 std::vector<double> right_data(this_y.begin()+i,this_y.end());
                 t3=(clock()-t3)/CLOCKS_PER_SEC;
                 debug[3]+=t3;
 
-//                debug_v(left_data);
-                
-                //float a=1/0;
-
-                //left_impurity = self.count_pur(left_data[:, -1])
-                double t5=clock();
-                //vector<double> this_y=get_y_column(left_data);
-                t5=(clock()-t5)/CLOCKS_PER_SEC;
-                debug[5]+=t5;
-
-
                 double t4=clock();
                 double left_impurity =gini(left_data);
-                t4=(clock()-t4)/CLOCKS_PER_SEC;
-                debug[4]+=t4;
-                //right_impurity = self.count_pur(right_data[:, -1])
-                
-                t5=clock();
-                //this_y=get_y_column(right_data);
-                t5=(clock()-t5)/CLOCKS_PER_SEC;
-                debug[5]+=t5;
-
-                
-                t4=clock();
                 double right_impurity=gini(right_data);
                 t4=(clock()-t4)/CLOCKS_PER_SEC;
                 debug[4]+=t4;
 
+                //====================================================================================
+                
 
-                /*
-                total_impurity = i * left_impurity + \
-                    (data_count - i) * right_impurity
-                total_impurity /= data_count
-                */
+/*
+                //===================================================
 
+
+                double t4=clock();
+                double left_impurity =v_gini(this_y.begin(),this_y.begin()+i,i);
+                double right_impurity=v_gini(this_y.begin()+i,this_y.end(),data_count-i);
+                t4=(clock()-t4)/CLOCKS_PER_SEC;
+                debug[4]+=t4;
+
+*/
+
+
+                double t7=clock();
                 double total_impurity = i*left_impurity + (data_count-i)*right_impurity;
-                //std::cout<<"\tr:"<<right_impurity<<"\tl:"<<left_impurity<<"\tt:"<<total_impurity<<"\tmin:"<<min_impurity<<std::endl;
-                if(right_impurity==0 && left_impurity==0)
-                {
-                    //std::cout<<"SSSSSSSSSSSS"<<std::endl;
-                }
+               
 
                 total_impurity = total_impurity/data_count;
 
@@ -316,6 +298,8 @@ Node* DecisionTree::split(std::vector<std::vector<double>> data , int now_depth)
                     best_cut_position = i;
 
                 }
+                t7=(clock()-t7)/CLOCKS_PER_SEC;
+                debug[7]+=t7;
             }
 
 
@@ -343,6 +327,8 @@ Node* DecisionTree::split(std::vector<std::vector<double>> data , int now_depth)
         left_data = after_sort[:best_cut_position, :]
         right_data = after_sort[best_cut_position:, :]
         */
+
+        double t8=clock();
         std::sort(data.begin(),
         data.end(),
         [best_cut_feature] (const std::vector<double> &a, const std::vector<double> &b)
@@ -353,7 +339,8 @@ Node* DecisionTree::split(std::vector<std::vector<double>> data , int now_depth)
         std::vector<std::vector<double>> left_data(data.begin(),data.begin()+best_cut_position);
         std::vector<std::vector<double>> right_data(data.begin()+best_cut_position,data.end());
         
-
+        t8=(clock()-t8)/CLOCKS_PER_SEC;
+        debug[8]+=t8;
         /*
         if now_depth is None:
             this_node.right_node = self.split(right_data, None)
